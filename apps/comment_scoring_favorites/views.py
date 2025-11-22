@@ -12,10 +12,10 @@ class CommentView(View):
     def get(self, request, *args, **kwargs):
         # print("=== CommentView GET Called ===")  # تست
         slug = kwargs['slug']
-        productId = request.GET.get('productId')
-        commentId = request.GET.get('commentId')
+        product_id = request.GET.get('product_id')
+        comment_id = request.GET.get('comment_id')
 
-        initial_dict = {'product_id': productId, 'comment_id': commentId}
+        initial_dict = {'product_id': product_id, 'comment_id': comment_id}
         form = CommentForm(initial=initial_dict)
         return render(request,"csf_app/partials/create_comment.html", {'form': form,'slug':slug})
 
