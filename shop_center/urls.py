@@ -30,4 +30,5 @@ urlpatterns = [
     path('warehouses/',include('apps.warehouses.urls', namespace='warehouses')),
     path('csf/',include('apps.comment_scoring_favorites.urls', namespace='csf')),
     path('ckeditor',include('ckeditor_uploader.urls')),
+    path('api/', include('apps.products.api.urls')),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

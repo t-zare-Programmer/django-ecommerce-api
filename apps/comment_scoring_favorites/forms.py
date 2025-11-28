@@ -3,7 +3,7 @@ from .models import Comment
 
 
 
-class CommentForm(forms.ModelForm):
+class CommentForm(forms.Form):
     product_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     comment_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     comment_text = forms.CharField(label='',
