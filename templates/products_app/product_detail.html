@@ -173,8 +173,8 @@
 
                         <ul class="product__meta">
                             <li class="product__meta-availability">موجودی: <span class="text-success">موجود در انبار</span></li>
-                            <li>برند: <a href="">{{ product.brand }}</a></li>
-                            <li>تعداد نظرات: <a href="">7</a> نظر</li>
+                            <li style="list-style: none;">برند: <a href="">{{ product.brand }}</a></li>
+                            <li style="list-style: none;">تعداد نظرات: <a href="">{{ product.comments_product.all|length }}</a> نظر</li>
                         </ul>
                     </div>
                     <!-- .product__info / end -->
