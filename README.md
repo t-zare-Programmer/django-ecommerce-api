@@ -1,13 +1,32 @@
-# shop_center
+# 🛒 Django E-commerce API
 
-پروژه فروشگاه اینترنتی با Django
+A backend e-commerce system built with Django and Django REST Framework.
 
-## نصب و اجرا
-1. محیط مجازی بساز و فعال کن
-2. وابستگی‌ها را نصب کن:
-   pip install -r requirements.txt
-3. فایل `.env` را بساز و مقدارها را قرار بده
-4. مهاجرت‌ها را اجرا کن:
-   python manage.py migrate
-5. سرور را اجرا کن:
-   python manage.py runserver
+## 🚀 Features
+- User authentication system
+- Product management
+- Shopping cart functionality
+- Order management
+- RESTful API structure
+
+## 🧰 Tech Stack
+- Python
+- Django
+- Django REST Framework (DRF)
+- SQL Server
+- HTML, CSS, JavaScript
+
+## 📦 Project Structure
+- users
+- products
+- orders
+- cart
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/t-zare-Programmer/django-ecommerce-api.git
+cd django-ecommerce-api
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
