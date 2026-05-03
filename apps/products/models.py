@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.db import models
-from django.db import models
 from email.mime import image
 
 from urllib3 import request
