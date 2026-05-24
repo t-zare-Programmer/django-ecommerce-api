@@ -4,11 +4,14 @@ from .serializers import ProductSerializer
 from .permissions import IsAdminOrReadOnly
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from .pagination import ProductPagination
 
 
 class ProductListAPIView(ListAPIView):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
+
+    pagination_class = ProductPagination
 
     filter_backends = [
         DjangoFilterBackend,
