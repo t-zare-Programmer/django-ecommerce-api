@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView,CreateAPIView, UpdateAPIView, DestroyAPIView
 from apps.products.models import Product
 from .serializers import ProductSerializer
-from rest_framework.permissions import IsAdminUser
+from .permissions import IsAdminOrReadOnly
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -29,16 +29,16 @@ class ProductDetailAPIView(RetrieveAPIView):
 class ProductCreateAPIView(CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
 class ProductUpdateAPIView(UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'slug'
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
 class ProductDeleteAPIView(DestroyAPIView):
     queryset = Product.objects.all()
     lookup_field = 'slug'
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 

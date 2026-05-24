@@ -5,7 +5,7 @@ from apps.products.services.product_service import ProductService
 # -----------------------------------------------
 # سریالایزر برند
 class BrandSerializer(serializers.ModelSerializer):
-    image_name = serializers.ImageField(required=False)
+    image_name = serializers.ImageField(required=False,allow_null=True)
 
     class Meta:
         model = Brand
@@ -21,7 +21,7 @@ class ProductGroupSerializer(serializers.ModelSerializer):
 # -----------------------------------------------
 # سریالایزر تصاویر محصول
 class ProductGallerySerializer(serializers.ModelSerializer):
-    image_name = serializers.ImageField(required=False)
+    image_name = serializers.ImageField(required=False,allow_null=True)
 
     class Meta:
         model = ProductGallery
@@ -30,7 +30,7 @@ class ProductGallerySerializer(serializers.ModelSerializer):
 # -----------------------------------------------
 # سریالایزر اصلی محصول با قابلیت read & write
 class ProductSerializer(serializers.ModelSerializer):
-    image_name = serializers.ImageField(required=False)
+    image_name = serializers.ImageField(required=False,allow_null=True)
 
     # Nested serializers
     brand = BrandSerializer()
