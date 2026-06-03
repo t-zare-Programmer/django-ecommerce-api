@@ -19,14 +19,19 @@ def send_sms(mobile_number, message):
     #     print(f'error2: {error}')
 
 #_________________________________________________________
+from django.utils.deconstruct import deconstructible
 import os
 from uuid import uuid4
 
+@deconstructible
 class FileUpload:
-    def __init__(self,dir,prefix):
+    def __init__(self, dir, prefix):
         self.dir = dir
         self.prefix = prefix
 
-    def upload_to(self,instance, filename):
-        filename,ext = os.path.splitext(filename)
+    def upload_to(self, instance, filename):
+        filename, ext = os.path.splitext(filename)
         return f'{self.dir}/{self.prefix}/{uuid4()}{ext}'
+
+    def __call__(self, instance, filename):
+        return self.upload_to(instance, filename)
