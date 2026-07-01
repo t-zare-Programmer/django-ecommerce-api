@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'apps.main.apps.MainConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.products.apps.ProductsConfig',
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'apps.payments.apps.PaymentsConfig',
     'apps.warehouses.apps.WarehousesConfig',
     'apps.comment_scoring_favorites.apps.CommentScoringFavoritesConfig',
+    'apps.core.apps.CoreConfig',
+
     'django_admin_listfilter_dropdown',
     'ckeditor',
     'ckeditor_uploader',
