@@ -1,8 +1,11 @@
 from apps.products.models import Product, Brand, ProductGroup, ProductGallery
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 class ProductService:
 
     @staticmethod
+    @transaction.atomic
     def create_product(validated_data):
         brand_data = validated_data.pop('brand', None)
         groups_data = validated_data.pop('product_group', [])
@@ -26,8 +29,9 @@ class ProductService:
             ProductGallery.objects.create(product=product, **gallery)
 
         return product
-
+#=============================================================================================
     @staticmethod
+    @transaction.atomic
     def update_product(instance, validated_data):
         brand_data = validated_data.pop('brand', None)
         groups_data = validated_data.pop('product_group', None)
@@ -57,3 +61,36 @@ class ProductService:
 
         instance.save()
         return instance
+
+# =============================================================================================
+    @staticmethod
+    def get_all_products():
+        return Product.objects.all()
+
+# =============================================================================================
+    @staticmethod
+    def get_active_products():
+        return Product.objects.filter(is_active=True)
+
+# =============================================================================================
+    @staticmethod
+    def create_product_from_serializer(serializer):
+        return serializer.save()
+
+# =============================================================================================
+    @staticmethod
+    def update_product_from_serializer(serializer):
+        return serializer.save()
+
+# =============================================================================================
+    @staticmethod
+    def delete_product(instance):
+        instance.delete()
+
+# =============================================================================================
+    @staticmethod
+    def get_product_or_404(slug):
+        return get_object_or_404(
+            Product,
+            slug=slug
+        )

@@ -53,8 +53,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'is_active',
         ]
 
-    def create(self, validated_data):
-        return ProductService.create_product(validated_data)
-
-    def update(self, instance, validated_data):
-        return ProductService.update_product(instance, validated_data)
+    # def create(self, validated_data):
+    #     return ProductService.create_product(validated_data)
+    #
+    # def update(self, instance, validated_data):
+    #     return ProductService.update_product(instance, validated_data)
