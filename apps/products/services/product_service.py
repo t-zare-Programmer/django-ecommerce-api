@@ -1,8 +1,15 @@
 from apps.products.models import Product, Brand, ProductGroup, ProductGallery
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ProductService:
+
+    ACTIVE_PRODUCTS_CACHE_KEY = "active_products"
 
     @staticmethod
     @transaction.atomic
@@ -28,6 +35,7 @@ class ProductService:
         for gallery in galleries_data:
             ProductGallery.objects.create(product=product, **gallery)
 
+        cache.delete(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
         return product
 #=============================================================================================
     @staticmethod
@@ -60,6 +68,7 @@ class ProductService:
             setattr(instance, attr, value)
 
         instance.save()
+        cache.delete(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
         return instance
 
 # =============================================================================================
@@ -70,7 +79,23 @@ class ProductService:
 # =============================================================================================
     @staticmethod
     def get_active_products():
-        return Product.objects.filter(is_active=True)
+        products = cache.get(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
+
+        if products is None:
+            logger.warning("Getting data from Database...")
+
+            products = Product.objects.filter(is_active=True).order_by("-id")
+
+            cache.set(
+                ProductService.ACTIVE_PRODUCTS_CACHE_KEY,
+                products,
+                timeout=300
+            )
+
+        else:
+            logger.warning("Getting data from Redis...")
+
+        return products
 
 # =============================================================================================
     @staticmethod
@@ -86,6 +111,7 @@ class ProductService:
     @staticmethod
     def delete_product(instance):
         instance.delete()
+        cache.delete(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
 
 # =============================================================================================
     @staticmethod
