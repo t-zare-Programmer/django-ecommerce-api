@@ -2,7 +2,7 @@ from apps.products.models import Product, Brand, ProductGroup, ProductGallery
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
-
+from apps.products.tasks import process_new_product
 import logging
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ class ProductService:
             ProductGallery.objects.create(product=product, **gallery)
 
         cache.delete(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
+        process_new_product.delay(product.product_name)
         return product
 #=============================================================================================
     @staticmethod
@@ -69,6 +70,7 @@ class ProductService:
 
         instance.save()
         cache.delete(ProductService.ACTIVE_PRODUCTS_CACHE_KEY)
+        process_new_product.delay(instance.product_name)
         return instance
 
 # =============================================================================================

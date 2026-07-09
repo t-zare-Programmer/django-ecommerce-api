@@ -34,5 +34,20 @@ services:
       - db
       - redis
 
+  celery:
+    build: .
+
+    command: celery -A shop_center worker -l info
+
+    volumes:
+      - .:/app
+
+    depends_on:
+      - db
+      - redis
+
+    environment:
+      - PYTHONUNBUFFERED=1
+
 volumes:
   postgres_data:
