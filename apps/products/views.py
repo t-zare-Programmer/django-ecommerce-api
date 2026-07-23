@@ -1,4 +1,3 @@
-from lib2to3.fixes.fix_input import context
 from django.shortcuts import render,get_object_or_404
 from pyexpat import features
 from .models import Product, ProductGroup, FeatureValue, Brand
