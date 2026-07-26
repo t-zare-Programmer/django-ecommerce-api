@@ -51,6 +51,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run Tests
+        env:
+          SECRET_KEY: testsecret
+          DEBUG: True
+          DB_NAME: shop_center
+          DB_USER: postgres
+          DB_PASSWORD: 12345
+          DB_HOST: localhost
+          DB_PORT: 5432
+          ALLOWED_HOSTS: localhost,127.0.0.1
+      
+        run: |
+          python manage.py migrate
+          pytest
+
       - name: Run Django checks
         env:
           SECRET_KEY: testsecret

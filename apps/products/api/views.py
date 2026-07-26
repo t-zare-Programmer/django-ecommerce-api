@@ -6,8 +6,104 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .pagination import ProductPagination
 from apps.products.services.product_service import ProductService
 from apps.core.response import ApiResponse
-
+from drf_spectacular.utils import (extend_schema,OpenApiParameter,OpenApiResponse,OpenApiExample,extend_schema_view)
 # =============================================================================================
+@extend_schema(
+    tags=["Products"],
+
+    summary="List active products",
+
+    description="""
+Retrieve a paginated list of active products.
+
+Features:
+- Pagination
+- Search
+- Ordering
+- Brand filtering
+
+Only active products are returned.
+""",
+
+    parameters=[
+
+        OpenApiParameter(
+            name="page",
+            type=int,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description="Page number.",
+        ),
+
+        OpenApiParameter(
+            name="search",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description="Search by product name or description.",
+        ),
+
+        OpenApiParameter(
+            name="ordering",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description="Order by price or id. Example: price, -price",
+        ),
+
+        OpenApiParameter(
+            name="brand__brand_title",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description="Filter products by brand title.",
+        ),
+
+    ],
+
+    responses={
+        200: OpenApiResponse(
+            response=ProductSerializer,
+            description="Products retrieved successfully.",
+        ),
+
+        400: OpenApiResponse(
+            description="Invalid request parameters.",
+        ),
+
+        401: OpenApiResponse(
+            description="Authentication credentials were not provided.",
+        ),
+
+        403: OpenApiResponse(
+            description="Permission denied.",
+        ),
+    },
+
+    examples=[
+        OpenApiExample(
+            name="Successful Response",
+            summary="List Products",
+            response_only=True,
+            value={
+                "success": True,
+                "message": "Products retrieved successfully.",
+                "data": {
+                    "count": 15,
+                    "next": None,
+                    "previous": None,
+                    "results": [
+                        {
+                            "id": 1,
+                            "product_name": "Nike Shoes",
+                            "price": "2500"
+                        }
+                    ]
+                }
+            },
+        )
+    ],
+)
 class ProductListAPIView(ListAPIView):
     serializer_class = ProductSerializer
 
@@ -45,6 +141,45 @@ class ProductListAPIView(ListAPIView):
             message="Products retrieved successfully."
         )
 # =============================================================================================
+@extend_schema(
+    tags=["Products"],
+    summary="Retrieve product details",
+    description="""
+Retrieve details of a single active product.
+
+Returns the complete information for one product.
+
+Only active products are returned.
+""",
+    responses={
+        200: OpenApiResponse(
+            response=ProductSerializer,
+            description="Product retrieved successfully.",
+            examples=[
+                OpenApiExample(
+                    "Product Detail",
+                    value={
+                        "success": True,
+                        "message": "Product retrieved successfully.",
+                        "data": {
+                            "id": 1,
+                            "product_name": "Nike Air Max",
+                            "price": 250,
+                            "brand": {
+                                "id": 1,
+                                "brand_title": "Nike"
+                            },
+                            "slug": "nike-air-max"
+                        }
+                    },
+                    response_only=True,
+                )
+            ]
+        ),
+        404: OpenApiResponse(description="Product not found."),
+    },
+)
+
 class ProductDetailAPIView(RetrieveAPIView):
     serializer_class = ProductSerializer
     lookup_field = 'slug'
@@ -61,6 +196,56 @@ class ProductDetailAPIView(RetrieveAPIView):
             message="Product retrieved successfully."
         )
 # =============================================================================================
+@extend_schema_view(
+    post=extend_schema(
+        operation_id="create_product",
+    )
+)
+
+@extend_schema(
+    tags=["Products"],
+    summary="Create a new product",
+    description="""
+Creates a new product.
+
+Permissions:
+- Admin users only.
+
+If the Brand or ProductGroup does not exist,
+they will be created automatically.
+""",
+    request=ProductSerializer,
+    responses={
+        201: OpenApiResponse(
+            response=ProductSerializer,
+            description="Product created successfully.",
+        ),
+        400: OpenApiResponse(
+            description="Validation Error",
+        ),
+        401: OpenApiResponse(
+            description="Authentication required.",
+        ),
+        403: OpenApiResponse(
+            description="Only administrators can create products.",
+        ),
+    },
+    examples=[
+        OpenApiExample(
+            "Create Product Example",
+            value={
+                "product_name": "Nike Air Max",
+                "price": 2500,
+                "brand": "Nike",
+                "product_group": "Shoes",
+                "description": "Running shoes",
+                "summery_description": "Comfortable running shoes",
+                "is_active": True,
+            },
+            request_only=True,
+        )
+    ],
+)
 class ProductCreateAPIView(CreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -71,6 +256,61 @@ class ProductCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save()
 # =============================================================================================
+@extend_schema_view(
+    put=extend_schema(
+        operation_id="update_product",
+    ),
+    patch=extend_schema(
+        operation_id="partial_update_product",
+    ),
+)
+
+@extend_schema(
+    tags=["Products"],
+    summary="Update existing product",
+    description="""
+Update an existing product.
+
+Permissions:
+- Admin users only.
+
+Supports both:
+- PUT (full update)
+- PATCH (partial update)
+""",
+    request=ProductSerializer,
+    responses={
+        200: OpenApiResponse(
+            response=ProductSerializer,
+            description="Product updated successfully.",
+            examples=[
+                OpenApiExample(
+                    "Update Product",
+                    value={
+                        "success": True,
+                        "message": "Product updated successfully.",
+                        "data": {
+                            "id": 1,
+                            "product_name": "Nike Air Max Updated",
+                            "price": 280,
+                            "brand": {
+                                "id": 1,
+                                "brand_title": "Nike"
+                            },
+                            "slug": "nike-air-max"
+                        }
+                    },
+                    response_only=True,
+                )
+            ],
+        ),
+        400: OpenApiResponse(description="Validation Error."),
+        401: OpenApiResponse(description="Authentication required."),
+        403: OpenApiResponse(description="Only administrators can update products."),
+        404: OpenApiResponse(description="Product not found."),
+    },
+)
+
 class ProductUpdateAPIView(UpdateAPIView):
     serializer_class = ProductSerializer
     lookup_field = 'slug'
@@ -83,6 +323,39 @@ class ProductUpdateAPIView(UpdateAPIView):
         serializer.save()
 
 # =============================================================================================
+@extend_schema_view(
+    delete=extend_schema(
+        operation_id="delete_product",
+    )
+)
+
+@extend_schema(
+    tags=["Products"],
+    summary="Delete product",
+    description="""
+Deletes an existing product.
+
+Permissions:
+- Admin users only.
+
+This operation permanently removes the product.
+""",
+    responses={
+        204: OpenApiResponse(
+            description="Product deleted successfully."
+        ),
+        401: OpenApiResponse(
+            description="Authentication required."
+        ),
+        403: OpenApiResponse(
+            description="Only administrators can delete products."
+        ),
+        404: OpenApiResponse(
+            description="Product not found."
+        ),
+    },
+)
+
 class ProductDeleteAPIView(DestroyAPIView):
     lookup_field = 'slug'
     permission_classes = [IsAdminOrReadOnly]
