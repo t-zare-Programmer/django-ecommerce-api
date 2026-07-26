@@ -60,8 +60,9 @@ jobs:
           DB_PASSWORD: 12345
           DB_HOST: localhost
           DB_PORT: 5432
+          REDIS_HOST: localhost
           ALLOWED_HOSTS: localhost,127.0.0.1
-      
+
         run: |
           python manage.py migrate
           pytest
