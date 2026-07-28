@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import os
+from decouple import config
 
 from ckeditor_demo.settings import CKEDITOR_UPLOAD_PATH, CKEDITOR_ALLOW_NONIMAGE_FILES, CKEDITOR_CONFIGS
 
@@ -12,12 +13,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(q3%xki!t%gbff43ex)=a+hoaaqmm1z5^$op$_!=ymv*de0_kv'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost'
+).split(',')
 
 
 # Application definition
@@ -29,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'apps.main.apps.MainConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.products.apps.ProductsConfig',
@@ -37,6 +42,8 @@ INSTALLED_APPS = [
     'apps.payments.apps.PaymentsConfig',
     'apps.warehouses.apps.WarehousesConfig',
     'apps.comment_scoring_favorites.apps.CommentScoringFavoritesConfig',
+    'apps.core.apps.CoreConfig',
+
     'django_admin_listfilter_dropdown',
     'ckeditor',
     'ckeditor_uploader',
@@ -86,11 +93,11 @@ WSGI_APPLICATION = 'shop_center.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shop_center',
-        'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -185,6 +192,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+
+    'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
 }
 
 from datetime import timedelta
@@ -192,4 +204,68 @@ from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+REDIS_HOST = config("REDIS_HOST", default="redis")
+
+# Redis Cache
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Celery
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379/0"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379/0"
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Shop Center API",
+
+    "DESCRIPTION": """
+REST API documentation for the Shop Center project.
+
+Features:
+- JWT Authentication
+- Product Management
+- Pagination
+- Filtering
+- Searching
+- Ordering
+""",
+
+    "VERSION": "1.0.0",
+
+    "SERVE_INCLUDE_SCHEMA": False,
+
+    "COMPONENT_SPLIT_REQUEST": True,
+
+    "SWAGGER_UI_SETTINGS": {
+        "persistAuthorization": True,
+    },
+
+    "SECURITY": [
+        {
+            "BearerAuth": [],
+        }
+    ],
+
+    "COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
 }

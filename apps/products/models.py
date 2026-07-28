@@ -16,7 +16,7 @@ from django.db.models import Sum,Avg
 class Brand(models.Model):
     brand_title = models.CharField(max_length=100,verbose_name="نام برند")
     file_upload=FileUpload('images','brand')
-    image_name = models.ImageField(upload_to= file_upload.upload_to , verbose_name='تصویر برند کالا')
+    image_name = models.ImageField(upload_to= file_upload , null=True, blank=True, verbose_name='تصویر برند کالا')
     slug = models.SlugField(max_length=200,null=True)
 
     def __str__(self):
@@ -30,7 +30,7 @@ class Brand(models.Model):
 class ProductGroup(models.Model):
     group_title = models.CharField(max_length=100,verbose_name='عنوان گروه کالا')
     file_upload = FileUpload('images', 'product_group')
-    image_name = models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر گروه کالا')
+    image_name = models.ImageField(upload_to=file_upload, null=True, blank=True, verbose_name='تصویر گروه کالا')
     description = models.TextField(blank=True,null=True,verbose_name='توضیحات گروه کالا')
     is_active = models.BooleanField(default=True,blank=True,verbose_name='وضعیت فعال/غیرفعال')
     group_parent = models.ForeignKey('ProductGroup',on_delete=models.CASCADE,verbose_name='والد گروه کالا',related_name='groups',null=True, blank=True)
@@ -63,7 +63,7 @@ class Product(models.Model):
     summery_description = models.TextField(blank=True,default='',null=True)
     description = RichTextUploadingField(blank=True,config_name='special',null=True)
     file_upload = FileUpload('images', 'product')
-    image_name = models.ImageField(upload_to=file_upload.upload_to, verbose_name='تصویر کالا')
+    image_name = models.ImageField(upload_to=file_upload, null=True, blank=True, verbose_name='تصویر کالا')
     price = models.PositiveIntegerField(default=0,verbose_name='قیمت کالا')
     product_group = models.ManyToManyField(ProductGroup,verbose_name='گروه کالا',related_name='products_of_group')
     brand = models.ForeignKey(Brand,verbose_name='برند کالا',on_delete=models.CASCADE,null=True,related_name='products_of_brand')
@@ -139,7 +139,7 @@ class ProductFeature(models.Model):
 class ProductGallery(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا',related_name='gallery_images')
     file_upload = FileUpload('images', 'product_gallery')
-    image_name = models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر کالا')
+    image_name = models.ImageField(upload_to=file_upload,null=True,blank=True,verbose_name='تصویر کالا')
 
     class Meta:
         verbose_name = 'تصویر'

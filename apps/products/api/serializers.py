@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from ..models import Product, Brand, ProductGroup, ProductGallery
+from apps.products.services.product_service import ProductService
 
 # -----------------------------------------------
 # سریالایزر برند
 class BrandSerializer(serializers.ModelSerializer):
+    image_name = serializers.ImageField(required=False,allow_null=True)
+
     class Meta:
         model = Brand
         fields = ['id', 'brand_title', 'image_name', 'slug']
@@ -18,6 +21,8 @@ class ProductGroupSerializer(serializers.ModelSerializer):
 # -----------------------------------------------
 # سریالایزر تصاویر محصول
 class ProductGallerySerializer(serializers.ModelSerializer):
+    image_name = serializers.ImageField(required=False,allow_null=True)
+
     class Meta:
         model = ProductGallery
         fields = ['id', 'image_name']
@@ -25,6 +30,8 @@ class ProductGallerySerializer(serializers.ModelSerializer):
 # -----------------------------------------------
 # سریالایزر اصلی محصول با قابلیت read & write
 class ProductSerializer(serializers.ModelSerializer):
+    image_name = serializers.ImageField(required=False,allow_null=True)
+
     # Nested serializers
     brand = BrandSerializer()
     product_group = ProductGroupSerializer(many=True)
@@ -46,58 +53,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'is_active',
         ]
 
-    # برای write کردن nested fields باید override کنیم
     def create(self, validated_data):
-        brand_data = validated_data.pop('brand', None)
-        groups_data = validated_data.pop('product_group', [])
-        galleries_data = validated_data.pop('gallery_images', [])
+        return ProductService.create_product(validated_data)
 
-        # اگر برند داده شد
-        if brand_data:
-            brand, created = Brand.objects.get_or_create(**brand_data)
-            validated_data['brand'] = brand
-
-        # ایجاد محصول
-        product = Product.objects.create(**validated_data)
-
-        # افزودن گروه‌ها
-        for group in groups_data:
-            group_obj, created = ProductGroup.objects.get_or_create(**group)
-            product.product_group.add(group_obj)
-
-        # افزودن تصاویر
-        for gallery in galleries_data:
-            ProductGallery.objects.create(product=product, **gallery)
-
-        return product
-
-    # آپدیت محصول
     def update(self, instance, validated_data):
-        brand_data = validated_data.pop('brand', None)
-        groups_data = validated_data.pop('product_group', None)
-        galleries_data = validated_data.pop('gallery_images', None)
-
-        # بروزرسانی برند
-        if brand_data:
-            brand, created = Brand.objects.get_or_create(**brand_data)
-            instance.brand = brand
-
-        # بروزرسانی گروه‌ها
-        if groups_data is not None:
-            instance.product_group.clear()
-            for group in groups_data:
-                group_obj, created = ProductGroup.objects.get_or_create(**group)
-                instance.product_group.add(group_obj)
-
-        # بروزرسانی تصاویر
-        if galleries_data is not None:
-            instance.gallery_images.all().delete()
-            for gallery in galleries_data:
-                ProductGallery.objects.create(product=instance, **gallery)
-
-        # بروزرسانی بقیه فیلدها
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        instance.save()
-        return instance
+        return ProductService.update_product(instance, validated_data)

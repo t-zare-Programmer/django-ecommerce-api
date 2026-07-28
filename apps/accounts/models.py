@@ -49,6 +49,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     active_code = models.CharField(max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(default=False)
 
+    @property
+    def is_staff(self):
+        return self.is_admin
+
     username = None
 
     USERNAME_FIELD = 'mobile_number'
@@ -74,7 +78,7 @@ class Customer(models.Model):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     file_upload = FileUpload('images', 'customer')
-    image_name = models.ImageField(upload_to=file_upload.upload_to, verbose_name='تصویر پروفایل',null=True,blank=True)
+    image_name = models.ImageField(upload_to=file_upload, verbose_name='تصویر پروفایل',null=True,blank=True)
 
     def __str__(self):
         return f"{self.user}"
