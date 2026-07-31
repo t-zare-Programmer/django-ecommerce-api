@@ -1,8 +1,22 @@
-# 🛒 Shop Center – Scalable Django E-commerce Backend
+# 🛒 Shop Center
 
-A modular e-commerce backend system built with Django and Django REST Framework, designed for product management, user authentication, and scalable business logic.
+![CI](https://github.com/t-zare-Programmer/django-ecommerce-api/actions/workflows/django.yml/badge.svg)
 
----
+![Codecov](https://codecov.io/gh/t-zare-Programmer/django-ecommerce-api/branch/main/graph/badge.svg)
+
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+
+![Django](https://img.shields.io/badge/Django-5.x-success)
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
+
+> Production-ready Django REST Framework backend for scalable e-commerce applications.
+
+A modular e-commerce backend built with Django and Django REST Framework (DRF), following a clean architecture and service layer pattern for scalability, maintainability, and production-ready API development.
+
+---------------------------------------------------------------------------------------
 
 ## 🚀 Overview
 
@@ -12,7 +26,72 @@ The project follows a modular and service-oriented architecture to support clean
 
 It includes JWT authentication, product management APIs, warehouse management, discount systems, and API documentation using Swagger/OpenAPI.
 
----
+---------------------------------------------------------------------------------------
+
+## ✨ Highlights
+
+- 🔐 JWT Authentication (SimpleJWT)
+- 🛒 RESTful Product Management API
+- 🧩 Service Layer Architecture
+- 🔎 Filtering, Searching & Ordering
+- 📄 OpenAPI 3 Documentation (Swagger & ReDoc)
+- 🧪 Pytest Test Suite
+- ⚡ Redis Cache Integration
+- 📨 Celery Background Tasks
+- 🐳 Docker Support
+- 🚀 GitHub Actions CI Pipeline
+
+---------------------------------------------------------------------------------------
+
+## ⚙️ Key Features
+
+### Authentication
+- Custom User Model
+- JWT Authentication using SimpleJWT
+- Secure Token-based API Access
+
+### Product Management
+- Full CRUD REST API
+- Nested Serializers
+- Product Gallery
+- Brand Management
+- Service Layer Pattern
+
+### API Features
+- Pagination
+- Filtering
+- Searching
+- Ordering
+- Standardized API Responses
+
+### Performance
+- Redis Caching
+- Celery Background Tasks
+
+### Testing
+- Pytest
+- Factory Boy
+- API Testing
+- Service Layer Testing
+
+### Documentation
+- Swagger UI
+- ReDoc
+- OpenAPI 3 Schema
+
+### Infrastructure
+- Docker
+- Docker Compose
+- GitHub Actions CI
+
+### Business Modules
+- Orders
+- Payments
+- Warehouses
+- Discounts
+- Reviews, Ratings & Favorites
+
+---------------------------------------------------------------------------------------
 
 ## 🧰 Tech Stack
 
@@ -28,42 +107,40 @@ It includes JWT authentication, product management APIs, warehouse management, d
 - Service Layer Pattern
 - Git & GitHub Workflow
 
----
+---------------------------------------------------------------------------------------
 
-## 🏗️ Architecture
+## 🏛️ Architecture
 
-The project follows a modular architecture with separation of concerns:
+The project follows a layered architecture to keep responsibilities separated and the codebase maintainable.
 
-- Views handle HTTP requests and responses
-- Serializers handle validation and transformation
-- Services contain business logic
-- Models manage database structure
+```text
+                Client
+                   │
+                   ▼
+          Django REST API Views
+                   │
+                   ▼
+             Serializers (Validation)
+                   │
+                   ▼
+          Service Layer (Business Logic)
+                   │
+                   ▼
+         Django ORM / Models
+                   │
+                   ▼
+              PostgreSQL
+```
 
-This structure improves:
-- scalability
-- maintainability
-- testability
-- clean code organization
+### Design Principles
 
-## ⚙️ Key Features
+- Separation of Concerns
+- Service Layer Pattern
+- Thin Views
+- Reusable Business Logic
+- Scalable REST API Design
 
-### 🔐 Authentication
-- JWT-based authentication using `djangorestframework-simplejwt`
-- Custom user model (`accounts.CustomUser`)
-- Token-based secure API access
-
----
-
-### 📦 Product Management API
-
-- CRUD operations for products
-- Nested serializers for brand, category, and gallery
-- JWT-protected admin endpoints
-- Service Layer implementation for business logic
-- Swagger/OpenAPI documentation
-- Search, filtering, and ordering support (in progress)
-
----
+---------------------------------------------------------------------------------------
 
 ## 🔗 Example API Endpoints
 
@@ -72,6 +149,8 @@ This structure improves:
 - GET /api/products/{slug}/
 - PUT /api/products/{slug}/update/
 - DELETE /api/products/{slug}/delete/
+
+---------------------------------------------------------------------------------------
 
 ## 🌱 Seed Data
 
@@ -87,15 +166,7 @@ The project includes a custom seed script for generating test data:
 
 This helps simulate realistic e-commerce scenarios during development.
 
-## 🔀 Git Workflow
-
-Development follows a feature-branch workflow:
-
-- main → stable production-ready code
-- feature/* → isolated feature development
-
-Example:
-`feature/product-service-layer`
+---------------------------------------------------------------------------------------
 
 ## 🚧 Future Improvements
 
@@ -107,57 +178,66 @@ Example:
 - Kubernetes deployment
 - AWS cloud deployment
 
-### 🛒 Order & Cart System (In Development)
-- Orders module structure implemented
-- Payment module structure prepared
-- Business logic under development
-
----
-
-### 🏷️ Discounts System
-- Discount app structure available for promotions
-
----
-
-### 🏬 Warehouse Management
-- Inventory and stock management module
-
----
-
-### 📝 Content Management
-- CKEditor integration for rich text editing
-- Image upload support for products and content
-
----
-
-### 📊 Admin Panel
-- Fully customized Django admin
-- Advanced filtering and search in admin interface
-- Optimized model display for management
-
----
+---------------------------------------------------------------------------------------
 
 ## 📂 Project Structure
 
 ```text
-apps/
-├── accounts/
-├── products/
-├── orders/
-├── payments/
-├── discounts/
-├── warehouses/
-└── main/
+shop_center/
+│
+├── apps/
+│   ├── accounts/                  # Authentication & User Management
+│   ├── products/                  # Product Domain
+│   │   ├── api/
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── permissions.py
+│   │   │   └── pagination.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── product_service.py
+│   │   │
+│   │   ├── tests/
+│   │   │   ├── conftest.py
+│   │   │   ├── test_api_products.py
+│   │   │   └── test_services.py
+│   │   │
+│   │   ├── factories.py
+│   │   ├── tasks.py
+│   │   ├── admin.py
+│   │   ├── models.py
+│   │   └── views.py
+│   │
+│   ├── orders/                    # Order Processing
+│   ├── payments/                  # Payment Management
+│   ├── discounts/                 # Discount Engine
+│   ├── warehouses/                # Inventory Management
+│   ├── comment_scoring_favorites/ # Reviews, Ratings & Favorites
+│   ├── main/                      # Website Entry Points
+│   └── core/                      # Shared Utilities & Common Components
+│
+├── shop_center/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── celery.py
+│   └── wsgi.py
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── pytest.ini
+└── README.md
 ```
 
----
+---------------------------------------------------------------------------------------
 
 ## 🗄️ Database
 
 - PostgreSQL used as primary database
 - Configured for scalable production-ready environment
 
----
+---------------------------------------------------------------------------------------
 
 ## ⚙️ Installation
 
@@ -174,7 +254,86 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
----
+---------------------------------------------------------------------------------------
+
+## 🔐 Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+SECRET_KEY=your_secret_key
+
+DEBUG=True
+
+ALLOWED_HOSTS=127.0.0.1,localhost
+
+DB_NAME=shop_center
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+The project uses **python-decouple** to securely load environment variables.
+
+---------------------------------------------------------------------------------------
+
+## 🐳 Running with Docker
+
+Build and start all services:
+
+```bash
+docker compose up --build
+```
+
+Run database migrations:
+
+```bash
+docker compose exec web python manage.py migrate
+```
+
+Create a superuser:
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Run the test suite:
+
+```bash
+docker compose exec web pytest
+```
+
+Stop all services:
+
+```bash
+docker compose down
+```
+
+---------------------------------------------------------------------------------------
+
+## 🧪 Running Tests
+
+Run all tests:
+
+```bash
+pytest
+```
+
+Run tests with coverage:
+
+```bash
+pytest --cov=apps/products --cov-report=term-missing
+```
+
+Current coverage:
+
+- ✅ Product API Tests
+- ✅ Service Layer Tests
+- ✅ Factory-based Test Data
+- ✅ GitHub Actions Continuous Integration
+
+---------------------------------------------------------------------------------------
 
 ## 🗄️ Database Configuration
 
@@ -199,7 +358,7 @@ DATABASES = {
 }
 ```
 
----
+---------------------------------------------------------------------------------------
 
 ## ⚙️ Apply Migrations
 
@@ -208,7 +367,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
----
+---------------------------------------------------------------------------------------
 
 ## 👤 Create Superuser
 
@@ -216,7 +375,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
----
+---------------------------------------------------------------------------------------
 
 ## 🌱 Seed Test Data
 
@@ -238,7 +397,7 @@ This script generates:
 - Discounts
 - Warehouses
 
----
+---------------------------------------------------------------------------------------
 
 ## 🚀 Run Development Server
 
@@ -252,7 +411,7 @@ Server will be available at:
 http://127.0.0.1:8000/
 ```
 
----
+---------------------------------------------------------------------------------------
 
 ## 📘 API Documentation
 
