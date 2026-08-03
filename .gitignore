@@ -29,3 +29,5 @@ local_settings.py
 Thumbs.db
 
 .coverage
+
+.env.prod
