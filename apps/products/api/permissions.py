@@ -10,4 +10,8 @@ class IsAdminOrReadOnly(BasePermission):
             return True
 
         # فقط ادمین بتواند تغییر دهد
-        return request.user and request.user.is_staff
+        return (
+                request.user
+                and request.user.is_authenticated
+                and request.user.is_admin
+        )

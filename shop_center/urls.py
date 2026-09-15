@@ -19,6 +19,8 @@ urlpatterns = [
     path('csf/', include('apps.comment_scoring_favorites.urls', namespace='csf')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 
+    path('api/', include('apps.core.urls', namespace='core')),
+
     # API
     path('api/', include('apps.products.api.urls')),
 
