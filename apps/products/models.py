@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db import models
 from email.mime import image
-
+from django.utils.text import slugify
 from urllib3 import request
 
 from utils import FileUpload
@@ -72,7 +72,21 @@ class Product(models.Model):
     published_date = models.DateTimeField(default=timezone.now,verbose_name='تاریخ انتشار')
     update_date = models.DateTimeField(auto_now=True,verbose_name='تاریخ آخرین بروزرسانی')
     features = models.ManyToManyField(Feature,through='ProductFeature')
-    slug = models.SlugField(max_length=200, null=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.product_name)
+            slug = base_slug
+            counter = 1
+
+            while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.product_name

@@ -177,6 +177,15 @@ class ProductService:
             .order_by("-id")
         )
 
+    @staticmethod
+    def get_all_products():
+        """
+        Return all products.
+
+        Used by admin-only CRUD operations such as
+        update and delete.
+        """
+        return Product.objects.all()
     # ============================================================
     # DELETE
     # ============================================================

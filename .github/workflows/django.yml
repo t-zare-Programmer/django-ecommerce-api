@@ -65,7 +65,7 @@ jobs:
 
         run: |
           python manage.py migrate
-          pytest --cov=. --cov-report=xml
+          pytest --cov=. --cov-report=term-missing --cov-report=xml --cov-fail-under=65
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

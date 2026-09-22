@@ -49,18 +49,6 @@ def api_client():
 
 
 @pytest.fixture
-def normal_user():
-    return UserFactory()
-
-
-@pytest.fixture
-def admin_user():
-    return UserFactory(
-        is_admin=True,
-    )
-
-
-@pytest.fixture
 def authenticated_user_client(normal_user):
     client = APIClient()
     client.force_authenticate(user=normal_user)

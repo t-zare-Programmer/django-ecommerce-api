@@ -48,16 +48,21 @@ def test_active_products_use_cache(
     clear_cache,
     active_product,
 ):
+    first_result = ProductService.get_active_products()
 
-    ProductService.get_active_products()
+    assert first_result.count() == 1
 
-    with patch(
-        "apps.products.models.Product.objects.filter"
-    ) as mocked_filter:
+    # Create a new product directly through the factory.
+    # The cache should still contain only the first product ID.
+    new_product = ProductFactory(
+        is_active=True,
+    )
 
-        ProductService.get_active_products()
+    second_result = ProductService.get_active_products()
 
-        mocked_filter.assert_not_called()
+    assert second_result.count() == 1
+    assert second_result.first().id == active_product.id
+    assert second_result.first().id != new_product.id
 # ==============================================================================================
 @pytest.mark.django_db
 def test_create_product():
